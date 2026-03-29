@@ -16,11 +16,13 @@ export default function NotesClient() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+ useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); 
+    }, 500);
     return () => clearTimeout(timer);
   }, [search]);
-
   const { data, isLoading, error } = useQuery<FetchNotesResponse, Error>({
     queryKey: ["notes", page, debouncedSearch],
     queryFn: () =>
