@@ -1,7 +1,9 @@
+'use client';
+
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { createNote } from "../../lib/api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query"; 
 import type { NoteTag } from "../../types/note";
 import css from "./NoteForm.module.css";
 
@@ -24,18 +26,30 @@ const validationSchema = Yup.object({
 export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
+  
+  const mutation = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onClose(); 
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    }
+  });
+
   return (
     <Formik<FormValues>
-  initialValues={{ title: "", content: "", tag: "Todo" }}
-  validationSchema={validationSchema}
-  onSubmit={async (values, { setSubmitting }) => {
-    await createNote(values);
-   queryClient.invalidateQueries({ queryKey: ["notes"] });
-    setSubmitting(false);
-    onClose();
-  }}
->
-      {({ isSubmitting }) => (
+      initialValues={{ title: "", content: "", tag: "Todo" }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+     
+        mutation.mutate(values);
+      }}
+    >
+
+      {() => (
         <Form className={css.form}>
           <div className={css.formGroup}>
             <label htmlFor="title">Title</label>
@@ -65,8 +79,12 @@ export default function NoteForm({ onClose }: NoteFormProps) {
             <button type="button" className={css.cancelButton} onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className={css.submitButton} disabled={isSubmitting}>
-              Create note
+            <button 
+              type="submit" 
+              className={css.submitButton} 
+              disabled={mutation.isPending} 
+            >
+              {mutation.isPending ? "Creating..." : "Create note"}
             </button>
           </div>
         </Form>
