@@ -26,28 +26,27 @@ export interface NewNote {
   tag: NoteTag;
 }
 
-// Получаем список всех заметок
 export const fetchNotes = async (
   params: FetchNotesParams
 ): Promise<FetchNotesResponse> => {
-  const { data } = await axiosInstance.get<FetchNotesResponse>("/", { params });
+  const { data } = await axiosInstance.get<FetchNotesResponse>("", { params });
   return data;
 };
 
-// Создаём новую заметку
+
 export const createNote = async (note: NewNote): Promise<Note> => {
-  const { data } = await axiosInstance.post<Note>("/", note);
+  const { data } = await axiosInstance.post<Note>("", note);
   return data;
 };
 
-// Удаляем заметку по id
+
 export const deleteNote = async (id: string): Promise<Note> => {
-  const { data } = await axiosInstance.delete<Note>(`/${id}`);
+  const { data } = await axiosInstance.delete<Note>(`${id}`);
   return data;
 };
 
-// ✅ Новая функция: Получаем одну заметку по id
+
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  const { data } = await axiosInstance.get<Note>(`/${id}`);
+  const { data } = await axiosInstance.get<Note>(`${id}`);
   return data;
 };
