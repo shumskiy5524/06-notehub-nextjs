@@ -6,7 +6,7 @@ import { fetchNotes, FetchNotesResponse } from "@/lib/api";
 export default function NotesClient() {
   const { data, isLoading, error } = useQuery<FetchNotesResponse, Error>({
     queryKey: ["notes"],
-    queryFn: () => fetchNotes({ page: 1, perPage: 20 }), // ← ОБЕРНУТО В СТРІЛКУ
+    queryFn: () => fetchNotes({ page: 1, perPage: 20 }), 
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;
